@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using MVC5Course.Models;
+using MVC5Course.Models.ViewModel;
 
 namespace MVC5Course.Controllers
 {
@@ -15,13 +16,19 @@ namespace MVC5Course.Controllers
         private FabricsEntities db = new FabricsEntities();
 
         // GET: Products
-        public ActionResult Index()
+        //[HttpPost]
+        public ActionResult Index(bool? Active = true)
         {
-            return View(db.Product.OrderByDescending(p => p.ProductId).Take(10));
+            //var data = db.Product.OrderByDescending(p => p.ProductId).Take(10);
+            var data = db.Product.
+                Where(p => p.Active.HasValue && p.Active.Value == Active).
+                OrderByDescending( p => p.ProductId ).
+                Take(10);
+            return View(data);
         }
 
         // GET: Products/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult Details(int? id) // 資料寫入ACTION裡 => 模型係結
         {
             if (id == null)
             {
@@ -44,7 +51,7 @@ namespace MVC5Course.Controllers
         // POST: Products/Create
         // 若要免於過量張貼攻擊，請啟用想要繫結的特定屬性，如需
         // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
-        [HttpPost]
+        [HttpPost] // 區分上方同名的Action用
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "ProductId,ProductName,Price,Active,Stock")] Product product)
         {
@@ -122,6 +129,20 @@ namespace MVC5Course.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        public ActionResult ListProducts()
+        {
+            var data = db.Product.Where(p => p.Active == true).
+                OrderByDescending(p => p.ProductId).
+                Select(p => new ProductLiteVM
+                {
+                    ProductId = p.ProductId,
+                    ProductName = p.ProductName,
+                    Price = p.Price,
+                    Stock = p.Stock
+                }).Take(10);
+        return View(data);
         }
     }
 }
