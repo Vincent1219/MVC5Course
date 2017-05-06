@@ -11,12 +11,16 @@ namespace MVC5Course
     {
         public static void RegisterRoutes(RouteCollection routes)
         {
-            routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+            routes.IgnoreRoute("{resource}.axd/{*pathInfo}"); // 什麼情況不要走路由
 
             routes.MapRoute(
                 name: "Default",
-                url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+                url: "{action}/{controller}/{id}",
+                defaults: new {
+                    controller = "Home",
+                    action = "Index",
+                    id = UrlParameter.Optional // 可有可無
+                }
             );
         }
     }
