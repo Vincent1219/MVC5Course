@@ -144,5 +144,21 @@ namespace MVC5Course.Controllers
                 }).Take(10);
         return View(data);
         }
+
+        public ActionResult CreateProducts()
+        {
+            return View();
+        }
+
+        [HttpPost] // Bind Include 只接收設定的屬性資料，其餘預設值，但 IsValid 會因為無Include 但該來屬性又有Required => 造成false
+        public ActionResult CreateProducts([Bind(Include = "ProductName,Price,Stock")] ProductLiteVM data)
+        {
+            if (ModelState.IsValid) {
+
+
+                return RedirectToAction("ListProducts");
+            }
+            return View(data);
+        }
     }
 }

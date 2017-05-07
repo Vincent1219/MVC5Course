@@ -33,6 +33,7 @@ namespace MVC5Course.Models
 
         [Required]
         [DisplayName("商品庫存量")]
+        [DisplayFormat(DataFormatString = "{0:0}", ApplyFormatInEditMode = true)]
         [Range(0, 100, ErrorMessage = "請輸入正確的數量")]
         public Nullable<decimal> Stock { get; set; }
 
