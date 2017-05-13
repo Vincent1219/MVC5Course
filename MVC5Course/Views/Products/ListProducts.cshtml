@@ -6,6 +6,10 @@
 
 <h2>ListProducts</h2>
 
+@if (TempData["CreateProduct_Result"] != null) {
+        <h1> @TempData["CreateProduct_Result"] </h1>
+    }
+
 <p>
     @Html.ActionLink("Create NewList", "CreateProducts")
 </p>

@@ -12,10 +12,11 @@ namespace MVC5Course
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}"); // 什麼情況不要走路由
+            //routes.IgnoreRoute("{resource}.aspx/{*pathInfo}"); // 什麼情況不要走路由 aspx混進MVC
 
             routes.MapRoute(
                 name: "Default",
-                url: "{controller}/{action}/{id}",
+                url: "{controller}/{action}/{id}", //{controller}/{action}/{*id} 吃ID後所有任何資料 不包含?後面
                 defaults: new {
                     controller = "Home",
                     action = "Index",

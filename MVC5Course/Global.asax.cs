@@ -18,6 +18,9 @@ namespace MVC5Course
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            ViewEngines.Engines.Clear(); // 減少搜尋VIEW時間
+            ViewEngines.Engines.Add(new RazorViewEngine());
         }
     }
 }
