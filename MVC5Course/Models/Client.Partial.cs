@@ -8,24 +8,30 @@ namespace MVC5Course.Models
     public partial class Client
     {
     }
-    
+
     public partial class ClientMetaData
     {
         [Required]
         public int ClientId { get; set; }
-        
-        [StringLength(40, ErrorMessage="欄位長度不得大於 40 個字元")]
+
+        [StringLength(40, ErrorMessage = "欄位長度不得大於 40 個字元")]
         public string FirstName { get; set; }
-        
-        [StringLength(40, ErrorMessage="欄位長度不得大於 40 個字元")]
+
+        [StringLength(40, ErrorMessage = "欄位長度不得大於 40 個字元")]
         public string MiddleName { get; set; }
-        
-        [StringLength(40, ErrorMessage="欄位長度不得大於 40 個字元")]
+
+        [StringLength(40, ErrorMessage = "欄位長度不得大於 40 個字元")]
         public string LastName { get; set; }
-        
-        [StringLength(1, ErrorMessage="欄位長度不得大於 1 個字元")]
+
+        [StringLength(1, ErrorMessage = "欄位長度不得大於 1 個字元")]
+        [UIHint("Gender")]
         public string Gender { get; set; }
+
+        //[DataType(DataType.Date)]
+        //[DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode =true)]
         public Nullable<System.DateTime> DateOfBirth { get; set; }
+
+        [UIHint("CreditRating")]
         public Nullable<double> CreditRating { get; set; }
         
         [StringLength(7, ErrorMessage="欄位長度不得大於 7 個字元")]

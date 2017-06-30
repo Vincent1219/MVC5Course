@@ -8,6 +8,8 @@ using System.Web;
 using System.Web.Mvc;
 using MVC5Course.Models;
 using MVC5Course.Models.ViewModel;
+using System.Data.SqlClient;
+using System.Data.Entity.Infrastructure;
 
 namespace MVC5Course.Controllers
 {
@@ -17,6 +19,7 @@ namespace MVC5Course.Controllers
 
         // GET: Products
         //[HttpPost]
+        [OutputCache(Duration = 5, Location = System.Web.UI.OutputCacheLocation.Client)]
         public ActionResult Index(bool Active = true)
         {
             //var data = db.Product.OrderByDescending(p => p.ProductId).Take(10);
@@ -57,6 +60,7 @@ namespace MVC5Course.Controllers
         // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost] // 區分上方同名的Action用
         [ValidateAntiForgeryToken]
+        [HandleError(ExceptionType = typeof(DbUpdateException), View = "Error_DbUpdateException")]
         public ActionResult Create([Bind(Include = "ProductId,ProductName,Price,Active,Stock")] Product product)
         {
             if (ModelState.IsValid)
@@ -105,6 +109,25 @@ namespace MVC5Course.Controllers
             return View(product);
         }
 
+        // POST: Products/Edit/5
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Edit(int id, FormCollection form)
+        //{
+        //    // [Bind(Include = "ProductId,ProductName,Price,Active,Stock")]
+        //    var product = repo.Get單筆資料ByProductId(id);
+        //    // TryUpdateModel過程產生(ModelState.IsValid)
+        //    if (TryUpdateModel<Product>(product, new string[] { "ProductId", "ProductName", "Price", "Active", "Stock" })) // 延遲驗證 - 拿MODEL來更新的話可以使用這方式 
+        //                                          // 前端若無送進要修改的欄位 就會自動帶原先的欄位資料近來 不會為欄位類型預設值
+        //    {
+        //        //db.Entry(product).State = EntityState.Modified;
+        //        //db.SaveChanges();
+        //        repo.UnitOfWork.Commit();
+        //        return RedirectToAction("Index");
+        //    }
+        //    return View(product);
+        //}
+
         // GET: Products/Delete/5
         public ActionResult Delete(int? id)
         {
@@ -146,17 +169,53 @@ namespace MVC5Course.Controllers
             base.Dispose(disposing);
         }
 
-        public ActionResult ListProducts()
+        public ActionResult ListProducts(SearchProducts searchCondition)
         {
-            var data = repo.取得Product列表頁所有資料(true).
-                Select(p => new ProductLiteVM
+            GetListProducts(searchCondition);
+            return View();
+        }
+
+        private void GetListProducts(SearchProducts search)
+        {
+            var data = repo.取得Product列表頁所有資料(true);
+            if (ModelState.IsValid)
+            {
+                if (!string.IsNullOrEmpty(search.productName))
                 {
-                    ProductId = p.ProductId,
-                    ProductName = p.ProductName,
-                    Price = p.Price,
-                    Stock = p.Stock
-                }).Take(10);
-        return View(data);
+                    data = data.Where(x => x.ProductName.Contains(search.productName));
+                }
+                if (search.StockStart.HasValue && search.stockEnd.HasValue)
+                {
+                    data = data.Where(x => x.Stock >= search.StockStart && x.Stock <= search.stockEnd);
+                }
+            }
+            ViewData.Model = data.
+                             Select(p => new ProductLiteVM
+                             {
+                                 ProductId = p.ProductId,
+                                 ProductName = p.ProductName,
+                                 Price = p.Price,
+                                 Stock = p.Stock
+                             }).Take(10);
+        }
+
+        [HttpPost]
+        public ActionResult BatchUpdate(SearchProducts search, ProductBatchUpdateVM[] items)
+        {
+           if (ModelState.IsValid)
+            {
+                foreach (var item in items)
+                {
+                    var prod = db.Product.Find(item.ProductId);
+                    prod.Price = item.Price;
+                    prod.Stock = item.Stock;
+                }
+                db.Configuration.ValidateOnSaveEnabled = false;
+                db.SaveChanges();
+                return RedirectToAction("ListProducts");
+            }
+            //GetListProducts(search);
+            return View("ListProducts");
         }
 
         public ActionResult CreateProducts()

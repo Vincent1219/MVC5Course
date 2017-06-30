@@ -25,10 +25,12 @@ namespace MVC5Course.Models
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             // 回傳多個錯誤訊息
-            if (this.Price > 100 && this.Stock > 5 ) {
+            if (this.Price > 100 && this.Stock > 5)
+            {
                 yield return new ValidationResult("價格與庫存數量不合理", new string[] { "Price", "stock" });
             }
-            if (this.OrderLine.Count() == 18 && this.Stock > 0 ) {
+            if (this.OrderLine.Count() == 18 && this.Stock > 0)
+            {
                 yield return new ValidationResult("Stock 與 訂單數量不匹配", new string[] { "stock" });
             }
             yield break;
@@ -67,6 +69,11 @@ namespace MVC5Course.Models
 
         public bool Is刪除 { get; set; }
 
+        // 欄位 建立時間 必須是日期。出現此錯誤需加上DisplayFormat
+        // 日期格式部分 DisplayFormat、DataType是一組一定要綁定，否則會出現年/月/日
+        // DataFormatString一定要是 ( - ) 才可以正常輸出日期
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [DataType(DataType.Date)] // 決定View輸出的型態
         [DisplayName("建立時間")]
         public System.DateTime CreatedOn { get; set; }
 

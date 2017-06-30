@@ -1,0 +1,15 @@
+﻿@model string
+
+
+@switch(Model)
+{
+    case "M":
+        @("👨")
+        break;
+    case "F":
+        @("👩")
+        break;
+    default:
+        @("N/A")
+        break;
+}

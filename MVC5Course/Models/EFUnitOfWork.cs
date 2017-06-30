@@ -1,4 +1,5 @@
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 
 namespace MVC5Course.Models
 {
@@ -16,8 +17,8 @@ namespace MVC5Course.Models
 
 		public void Commit()
 		{
-			Context.SaveChanges();
-		}
+            Context.SaveChanges();
+        }
 		
         /// <summary>
         /// 

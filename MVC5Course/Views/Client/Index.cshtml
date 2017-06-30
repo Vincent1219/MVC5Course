@@ -1,0 +1,82 @@
+﻿@model IEnumerable<MVC5Course.Models.Client>
+@using PagedList
+@using PagedList.Mvc
+
+@{
+    ViewBag.Title = "Index";
+    if (IsAjax)
+    {
+        Layout = "";
+    }
+}
+
+<h2>Index</h2>
+
+@using (Html.BeginForm("Index", "Client", method: FormMethod.Get))
+{
+    @:篩選:
+    @Html.DropDownList("CreditRationFilter", "選擇信用等級")
+    @Html.DropDownList("lastNameFilter", "選擇姓")
+    <input type="submit" value="執行篩選" />
+}
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MiddleName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LastName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Gender)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DateOfBirth)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreditRating)
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.FirstName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MiddleName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LastName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Gender)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DateOfBirth)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CreditRating)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.ClientId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.ClientId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.ClientId })
+        </td>
+    </tr>
+}
+</table>
+
+@Html.PagedListPager(
+    Model as IPagedList,
+    (p) => Url.Action("Index", new
+    {
+        pageNo = p,
+        CreditRatingFilter = Html.Value("CreditRationFilter"),
+        lastNameFilter = Html.Value("lastNameFilter")
+    }),
+    PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing("#Main"))
+@* 要在Layout 把  用div包起來 名稱為Main*@ 

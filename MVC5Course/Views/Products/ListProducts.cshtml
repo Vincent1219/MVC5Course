@@ -13,43 +13,61 @@
 <p>
     @Html.ActionLink("Create NewList", "CreateProducts")
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.ProductId)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ProductName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Price)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Stock)
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.ProductId)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ProductName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Price)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Stock)
-        </td>
-        @*<td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-        </td>*@
-    </tr>
+<form method="Post">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    商品名稱：
+    @Html.TextBox("searchCondition.productName")
+    庫存數量：
+    @Html.TextBox("searchCondition.StockStart", null, new { size = "10", type = "number" }) ~
+    @Html.TextBox("searchCondition.stockEnd", null, new { size = "10", type = "number" })
+    <button>搜尋</button>
+</form>
+
+@using (Html.BeginForm("BatchUpdate", "Products"))
+{
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Stock)
+            </th>
+            <th></th>
+        </tr>
+        @{
+            var items = Model.ToArray();
+        }
+        @for (var i = 0; i < items.Length; i++)
+        {
+            <tr>
+                @Html.HiddenFor(modelItem => items[i].ProductId)
+                <td>
+                    @Html.DisplayFor(modelItem => items[i].ProductId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem  => items[i].ProductName)
+                </td>
+                <td>
+                    @Html.EditorFor(modelItem => items[i].Price)
+                </td>
+                <td>
+                    @Html.EditorFor(modelItem => items[i].Stock)
+                </td>
+                @*<td>
+                        @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                        @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                    </td>*@
+            </tr>
+        }
+    </table>
+    <button>批次更新</button>
 }
-
-</table>
